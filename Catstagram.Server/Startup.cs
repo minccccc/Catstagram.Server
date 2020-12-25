@@ -16,7 +16,7 @@ namespace Catstagram.Server
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration) 
+        public Startup(IConfiguration configuration)
             => Configuration = configuration;
 
         public IConfiguration Configuration { get; }
@@ -26,49 +26,11 @@ namespace Catstagram.Server
         {
             services
                 .AddDbContext<CatstagramDbContext>(options =>
-                    options.UseSqlServer(
-                        Configuration.GetConnectionString("DefaultConnection")));
-            
-            services
-                .AddDatabaseDeveloperPageExceptionFilter();
-
-            services
-                //.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                //.AddDefaultIdentity<IdentityUser>()
-                .AddIdentity<User, IdentityRole>(options => {
-                    options.Password.RequiredLength = 4;
-                    options.Password.RequireDigit = false;
-                    options.Password.RequireLowercase = false;
-                    options.Password.RequireUppercase = false;
-                    options.Password.RequireNonAlphanumeric = false;
-                })
-                .AddEntityFrameworkStores<CatstagramDbContext>();
-
-            var applicationSettings = Configuration.GetSection("ApplicationSettings");
-            services.Configure<AppSettings>(applicationSettings);
-
-            var appSettings = applicationSettings.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
-
-            services
-                .AddAuthentication(x =>
-                {
-                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                }).AddJwtBearer(x => {
-                    x.RequireHttpsMetadata = false;
-                    x.SaveToken = true;
-                    x.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateIssuer = false,
-                        ValidateAudience = false
-                    };
-                });
-
-            //services.AddControllersWithViews();
-            services.AddControllers();
+                    options.UseSqlServer(this.Configuration.GetDefaultConnection()))
+                .AddIdentity()
+                .AddJwtIdentity(Configuration)
+                .AddDatabaseDeveloperPageExceptionFilter()
+                .AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -77,43 +39,22 @@ namespace Catstagram.Server
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            //    app.UseMigrationsEndPoint();
             }
-            //else
-            //{
-            //    app.UseExceptionHandler("/Home/Error");
-            //    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-            //    app.UseHsts();
-            //}
 
-            //app.UseHttpsRedirection();
-            //app.UseStaticFiles();
-
-            app.UseRouting();
-
-            app.UseCors(options => options
-                .AllowAnyOrigin()
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-            );
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            //app.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapControllerRoute(
-            //        name: "default",
-            //        pattern: "{controller=Home}/{action=Index}/{id?}");
-            //    endpoints.MapRazorPages();
-            //});
-            app.UseEndpoints(endpoints => 
-            { 
-                endpoints.MapControllers(); 
-            });
-
-
-            app.ApplyMigrations();
+            app
+                .UseRouting()
+                .UseCors(options => options
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                )
+                .UseAuthentication()
+                .UseAuthorization()
+                .UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                })
+                .ApplyMigrations();
         }
     }
 }
