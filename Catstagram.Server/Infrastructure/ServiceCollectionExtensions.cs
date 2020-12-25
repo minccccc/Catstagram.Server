@@ -1,10 +1,13 @@
 ﻿using Catstagram.Server.Data;
 using Catstagram.Server.Data.Models;
+using Catstagram.Server.Features.Cats;
+using Catstagram.Server.Features.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 namespace Catstagram.Server.Infrastructure
@@ -14,7 +17,8 @@ namespace Catstagram.Server.Infrastructure
         public static IServiceCollection AddIdentity(this IServiceCollection services)
         {
             services
-                .AddIdentity<User, IdentityRole>(options => {
+                .AddIdentity<User, IdentityRole>(options =>
+                {
                     options.Password.RequiredLength = 4;
                     options.Password.RequireDigit = false;
                     options.Password.RequireLowercase = false;
@@ -39,7 +43,8 @@ namespace Catstagram.Server.Infrastructure
                 {
                     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                }).AddJwtBearer(x => {
+                }).AddJwtBearer(x =>
+                {
                     x.RequireHttpsMetadata = false;
                     x.SaveToken = true;
                     x.TokenValidationParameters = new TokenValidationParameters
@@ -52,5 +57,27 @@ namespace Catstagram.Server.Infrastructure
                 });
             return services;
         }
+
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+        {
+            services
+                .AddTransient<IIdentityService, IdentityService>()
+                .AddTransient<ICatService, CatService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddSwagger(this IServiceCollection services)
+        {
+            services
+                .AddSwaggerGen(c => {
+                    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Catstagram API", Version = "v1" });
+                });
+
+            return services;
+        }
+
+
+
     }
 }
