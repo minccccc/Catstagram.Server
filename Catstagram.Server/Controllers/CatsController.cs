@@ -11,7 +11,7 @@ namespace Catstagram.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<int>> Create( CreateCatRequestModel createCatRequestModel)
         {
-            return 0;
+            return 1;
         }
     }
 }
