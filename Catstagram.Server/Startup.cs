@@ -1,6 +1,8 @@
 using Catstagram.Server.Data;
 using Catstagram.Server.Data.Models;
 using Catstagram.Server.Infrastructure;
+using Catstagram.Server.Infrastructure.Extensions;
+using Catstagram.Server.Infrastructure.Filters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,7 +34,7 @@ namespace Catstagram.Server
                 .AddDatabaseDeveloperPageExceptionFilter()
                 .AddApplicationServices()
                 .AddSwagger()
-                .AddControllers();
+                .AddControllers(options => options.Filters.Add<ModelOrNorFoundActionFilter>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -8,9 +8,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Linq;
 using System.Text;
 
-namespace Catstagram.Server.Infrastructure
+namespace Catstagram.Server.Infrastructure.Extensions
 {
     public static class ServiceCollectionExtensions
     {
@@ -72,12 +73,11 @@ namespace Catstagram.Server.Infrastructure
             services
                 .AddSwaggerGen(c => {
                     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Catstagram API", Version = "v1" });
+                    c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
                 });
 
             return services;
         }
-
-
 
     }
 }

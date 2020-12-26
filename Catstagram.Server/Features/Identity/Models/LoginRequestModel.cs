@@ -1,16 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Catstagram.Server.Features.Identity
+namespace Catstagram.Server.Features.Identitys.Models
 {
-    public class RegisterRequestModel
+    public class LoginRequestModel
     {
         [Required]
         public string UserName { get; set; }
 
         [Required]
         public string Password { get; set; }
-
-        [Required]
-        public string Email { get; set; }
     }
 }
