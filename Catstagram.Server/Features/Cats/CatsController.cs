@@ -1,8 +1,7 @@
-﻿using Catstagram.Server.Data;
-using Catstagram.Server.Data.Models;
-using Catstagram.Server.Infrastructure;
+﻿using Catstagram.Server.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Catstagram.Server.Features.Cats
@@ -16,6 +15,16 @@ namespace Catstagram.Server.Features.Cats
         {
             this.catService = catService;
         }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IEnumerable<CatListingResponseModel>> Mine()
+        {
+            var userId = this.User.GetId();
+
+            return await this.catService.ByUser(userId);
+        }
+
 
         [Authorize]
         [HttpPost]
