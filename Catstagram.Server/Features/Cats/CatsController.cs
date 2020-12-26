@@ -1,10 +1,10 @@
 ﻿using Catstagram.Server.Features.Cats.Models;
-using Catstagram.Server.Infrastructure;
 using Catstagram.Server.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static Catstagram.Server.Infrastructure.WebConstants;
 
 namespace Catstagram.Server.Features.Cats
 {
@@ -69,5 +69,21 @@ namespace Catstagram.Server.Features.Cats
 
             return Ok();
         }
+
+        [HttpDelete]
+        [Route(RouteId)]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var userId = this.User.GetId();
+            var deleted = await this.catService.Delete(id, userId);
+
+            if (!deleted)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
+        }
+
     }
 }

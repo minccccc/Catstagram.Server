@@ -39,8 +39,8 @@ namespace Catstagram.Server.Features.Cats
                 .Cats
                 .Where(c => c.Id == id)
                 .FirstOrDefaultAsync();
-        
-            if(cat == null)
+
+            if (cat == null)
             {
                 return false;
             }
@@ -77,6 +77,22 @@ namespace Catstagram.Server.Features.Cats
                 })
                 .FirstOrDefaultAsync();
 
+        public async Task<bool> Delete(int id, string userId)
+        {
+            var cat = await this.data
+              .Cats
+              .Where(c => c.Id == id && c.UserId == userId)
+              .FirstOrDefaultAsync();
+
+            if (cat == null)
+            {
+                return false;
+            }
+
+            this.data.Cats.Remove(cat);
+
+            return true;
+        }
     }
 
 }
